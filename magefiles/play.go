@@ -6,5 +6,5 @@ import (
 )
 
 func Rand() {
-	fmt.Println(randx.UID())
+	fmt.Println(randx.String(32))
 }

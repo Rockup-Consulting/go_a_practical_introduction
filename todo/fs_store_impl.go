@@ -20,9 +20,14 @@ func (f FsStore) Create(task string) error {
 		return err
 	}
 
+	uid, err := randx.UID()
+	if err != nil {
+		return err
+	}
+
 	items = append(items, Item{
 		Task:    task,
-		UID:     randx.UID(),
+		UID:     uid,
 		Checked: false,
 	})
 
