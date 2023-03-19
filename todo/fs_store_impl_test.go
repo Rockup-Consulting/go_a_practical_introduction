@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"os"
 	"testing"
+	"todo/logx"
 	"todo/todo"
 )
 
 func TestTodoFS(t *testing.T) {
+	l := logx.New("TEST", true)
 	initialData, err := json.Marshal([]todo.Item{
 		{
 			Task:    "Go to grocery store",
@@ -25,7 +27,7 @@ func TestTodoFS(t *testing.T) {
 	db, cleanup := createTempFile(t, string(initialData))
 	defer cleanup()
 
-	todoStore := todo.NewFsStore(db)
+	todoStore := todo.NewFsStore(db, l)
 
 	t.Run("create and list items", func(t *testing.T) {
 		isNilErr(t, todoStore.Create("one"))

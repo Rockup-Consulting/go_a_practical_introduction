@@ -3,13 +3,7 @@ package main
 import (
 	"fmt"
 	"todo/randx"
-
-	"github.com/google/uuid"
 )
-
-func UUID() {
-	fmt.Println(uuid.NewString())
-}
 
 func Rand() error {
 	r, err := randx.String(32)

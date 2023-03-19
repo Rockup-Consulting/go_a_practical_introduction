@@ -2,16 +2,18 @@ package todo
 
 import (
 	"encoding/json"
+	"log"
 	"os"
 	"todo/randx"
 )
 
 type FsStore struct {
 	db *os.File
+	l  *log.Logger
 }
 
-func NewFsStore(db *os.File) FsStore {
-	return FsStore{db}
+func NewFsStore(db *os.File, l *log.Logger) FsStore {
+	return FsStore{db, l}
 }
 
 func (f FsStore) Create(task string) error {
@@ -25,6 +27,8 @@ func (f FsStore) Create(task string) error {
 		return err
 	}
 
+	f.l.Printf("creating new Todo Item: %q", uid)
+
 	items = append(items, Item{
 		Task:    task,
 		UID:     uid,
@@ -35,6 +39,8 @@ func (f FsStore) Create(task string) error {
 }
 
 func (f FsStore) Delete(uid string) error {
+	f.l.Printf("deleting Todo Item: %q", uid)
+
 	items, err := f.read()
 	if err != nil {
 		return err
@@ -96,6 +102,7 @@ func (f FsStore) List(filter Filter) ([]Item, error) {
 }
 
 func (f FsStore) Toggle(uid string) error {
+	f.l.Printf("toggling Todo Item: %q", uid)
 	items, err := f.read()
 	if err != nil {
 		return err
