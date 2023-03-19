@@ -3,16 +3,21 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
+	"text/tabwriter"
 	"todo/todo"
 )
 
 type Routes struct {
 	todoStore todo.Store
 	l         *log.Logger
+	tw        *tabwriter.Writer
 }
 
 func InitRoutes(todoStore todo.Store, l *log.Logger) Routes {
-	return Routes{todoStore, l}
+	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+
+	return Routes{todoStore, l, tw}
 }
 
 func (r Routes) HandleInstruction(instruction string) error {
@@ -24,27 +29,25 @@ func (r Routes) HandleInstruction(instruction string) error {
 			return err
 		}
 
-		fmt.Println(list)
+		r.writeTodoList(list)
 	case "lc":
 		r.l.Println("list all Checked Todo Items")
-		fmt.Println("list all Checked Todo Items")
 
 		list, err := r.todoStore.List(todo.Checked)
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(list)
+		r.writeTodoList(list)
 	case "lu":
 		r.l.Println("list all Unchecked Todo Items")
-		fmt.Println("list all Unchecked Todo Items")
 
 		list, err := r.todoStore.List(todo.NotChecked)
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(list)
+		r.writeTodoList(list)
 	case "t":
 		r.l.Println("invalid input: toggle command expects exactly one argument")
 		fmt.Println("toggle Todo Item requires exactly one argument: TodoItem ID")
@@ -120,4 +123,13 @@ func (r Routes) HandleInstructionWithArg(instruction, arg string) error {
 	}
 
 	return nil
+}
+
+func (r Routes) writeTodoList(list []todo.Item) {
+	for _, t := range list {
+		fmt.Fprintf(r.tw, "%s\t%s\t%t\n", t.UID, t.Task, t.Checked)
+	}
+
+	r.tw.Flush()
+	fmt.Println()
 }
