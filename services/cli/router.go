@@ -51,17 +51,22 @@ func (r Routes) HandleInstruction(instruction string) error {
 	case "t":
 		r.l.Println("invalid input: toggle command expects exactly one argument")
 		fmt.Println("toggle Todo Item requires exactly one argument: TodoItem ID")
+		fmt.Println()
 	case "d":
 		r.l.Println("invalid input: delete command expects exactly one argument")
 		fmt.Println("delete Todo Item requires exactly one argument: TodoItem ID")
+		fmt.Println()
 	case "c":
 		r.l.Println("invalid input: create command expects exactly one argument")
 		fmt.Println("create new Todo Item requires exactly one argument: TodoItem Message")
+		fmt.Println()
 	case "h":
 		fmt.Print(startupInstruction)
+		fmt.Println()
 	default:
 		r.l.Printf("unknown command: %q\n", instruction)
 		fmt.Printf("unknown command: %q\n", instruction)
+		fmt.Println()
 	}
 
 	return nil
@@ -72,54 +77,61 @@ func (r Routes) HandleInstructionWithArg(instruction, arg string) error {
 	case "l":
 		r.l.Println("invalid input: list command expects zero arguments")
 		fmt.Println("list command expects zero arguments")
+		fmt.Println()
 
 	case "lc":
 		r.l.Println("invalid input: list checked command expects zero arguments")
 		fmt.Println("list checked command expects zero arguments")
+		fmt.Println()
 
 	case "lu":
 		r.l.Println("invalid input: list unchecked command expects zero arguments")
 		fmt.Println("list unchecked command expects zero arguments")
+		fmt.Println()
 
 	case "t":
 		err := r.todoStore.Toggle(arg)
 		if err != nil {
 			if todo.IsNotFoundErr(err) {
-				fmt.Printf("TodoItem %q not found", arg)
+				fmt.Printf("TodoItem %q not found\n\n", arg)
 				return nil
 			}
-
 			return err
 		}
+		fmt.Println()
 
 	case "d":
 		err := r.todoStore.Delete(arg)
 		if err != nil {
 			if todo.IsNotFoundErr(err) {
-				fmt.Printf("TodoItem %q not found", arg)
+				fmt.Printf("TodoItem %q not found\n\n", arg)
 				return nil
 			}
 
 			return err
 		}
+		fmt.Println()
 
 	case "c":
 		err := r.todoStore.Create(arg)
 		if err != nil {
 			if todo.IsNotFoundErr(err) {
-				fmt.Printf("TodoItem %q not found", arg)
+				fmt.Printf("TodoItem %q not found\n\n", arg)
 				return nil
 			}
 
 			return err
 		}
+		fmt.Println()
 
 	case "h":
 		r.l.Println("invalid input: help command expects zero arguments")
 		fmt.Println("help command expects zero arguments")
+		fmt.Println()
 	default:
 		r.l.Printf("unknown command: %q\n", instruction)
 		fmt.Printf("unknown command: %q\n", instruction)
+		fmt.Println()
 	}
 
 	return nil
