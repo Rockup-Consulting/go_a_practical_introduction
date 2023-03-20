@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"todo/randx"
+	"todo/core/randx"
 )
 
 func Rand() error {

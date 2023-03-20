@@ -2,13 +2,14 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"strings"
-	"todo/logx"
+	"todo/core/logx"
 	"todo/todo"
 )
 
@@ -19,6 +20,11 @@ func main() {
 	l := logx.New("TodoList", *verbose)
 
 	if err := run(l); err != nil {
+		if errors.Is(err, ErrUserQuit) {
+			fmt.Println("Bye!")
+			return
+		}
+
 		fmt.Println("Unexpected error, quitting TodoList")
 		l.Printf("ERROR: program exiting: %s", err)
 		os.Exit(1)
@@ -66,16 +72,14 @@ func run(l *log.Logger) error {
 
 	l.Println("listening for standard input")
 	for {
-		in, err := inputReader.ReadString('\n')
+		line, err := inputReader.ReadString('\n')
 		if err != nil {
 			return err
 		}
 
-		if in[len(in)-1] == '\n' {
-			in = in[:len(in)-1]
-		}
+		line = strings.TrimSuffix(line, "\n")
 
-		instruction, arg, ok := strings.Cut(in, " ")
+		instruction, arg, ok := strings.Cut(line, " ")
 		if ok {
 			if err := routes.HandleInstructionWithArg(instruction, arg); err != nil {
 				return err
@@ -83,17 +87,10 @@ func run(l *log.Logger) error {
 			continue
 		}
 
-		if instruction == "q" {
-			fmt.Println("see you soon!")
-			break
-		}
-
 		if err := routes.HandleInstruction(instruction); err != nil {
 			return err
 		}
 	}
-
-	return nil
 }
 
 func initFileStore(l *log.Logger) (*os.File, error) {

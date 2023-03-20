@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"text/tabwriter"
+	"todo/core/twx"
 	"todo/todo"
 )
 
@@ -14,8 +16,10 @@ type Routes struct {
 	tw        *tabwriter.Writer
 }
 
+var ErrUserQuit = errors.New("user quit")
+
 func InitRoutes(todoStore todo.Store, l *log.Logger) Routes {
-	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+	tw := twx.New(os.Stdout)
 
 	return Routes{todoStore, l, tw}
 }
@@ -63,6 +67,8 @@ func (r Routes) HandleInstruction(instruction string) error {
 	case "h":
 		fmt.Print(startupInstruction)
 		fmt.Println()
+	case "q":
+		return ErrUserQuit
 	default:
 		r.l.Printf("unknown command: %q\n", instruction)
 		fmt.Printf("unknown command: %q\n", instruction)
@@ -127,6 +133,10 @@ func (r Routes) HandleInstructionWithArg(instruction, arg string) error {
 	case "h":
 		r.l.Println("invalid input: help command expects zero arguments")
 		fmt.Println("help command expects zero arguments")
+		fmt.Println()
+	case "q":
+		r.l.Println("invalid input: quit command expects zero arguments")
+		fmt.Println("quit command expects zero arguments")
 		fmt.Println()
 	default:
 		r.l.Printf("unknown command: %q\n", instruction)

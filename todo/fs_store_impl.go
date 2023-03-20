@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
-	"todo/randx"
+	"todo/core/randx"
 )
 
 type FsStore struct {
